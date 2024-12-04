@@ -24,40 +24,40 @@ func main() {
 	}
 	defer input.Close()
 
-	r := bufio.NewReader(input)
-	var leftList []int
-	var rightList []int
+	var leftList, rightList []int
+	scanner := bufio.NewScanner(input)
 
-	for {
-		line, err := r.ReadString('\n')
-		if err != nil {
-			break
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		nums := strings.Fields(line)
+		if len(nums) < 2 {
+			fmt.Fprintf(os.Stderr, "Invalid line format: %s\n", line)
 		}
 
-		line, ok := strings.CutSuffix(line, "\n")
-		if !ok {
-			fmt.Println("Error removing suffix from the line:\n", line)
-		}
-
-		nums := strings.Split(line, "   ")
 		num1, err := strconv.Atoi(nums[0])
-		check(err)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error parsing number: %v\n", err)
+			os.Exit(1)
+		}
 
 		num2, err := strconv.Atoi(nums[1])
-		check(err)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error parsing number: %v\n", err)
+			os.Exit(1)
+		}
+
 		leftList = append(leftList, num1)
 		rightList = append(rightList, num2)
 	}
 
-	sort.Slice(leftList, func(i, j int) bool { return leftList[i] < leftList[j] })
-	sort.Slice(rightList, func(i, j int) bool { return rightList[i] < rightList[j] })
+	sort.Ints(leftList)
+	sort.Ints(rightList)
 
 	var result int
-
-	for i, num := range leftList {
-		result += abs(num - rightList[i])
+	for i := range leftList {
+		result += abs(leftList[i] - rightList[i])
 	}
 
-	fmt.Println("result: ", result)
+	fmt.Println("Result: ", result)
 
 }
