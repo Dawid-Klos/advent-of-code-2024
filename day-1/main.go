@@ -9,12 +9,6 @@ import (
 	"strings"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
 func abs(x int) int {
 	if x < 0 {
 		return -x
@@ -24,7 +18,10 @@ func abs(x int) int {
 
 func main() {
 	input, err := os.Open("input.txt")
-	check(err)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error opening a file: %v\n", err)
+		os.Exit(1)
+	}
 	defer input.Close()
 
 	r := bufio.NewReader(input)
