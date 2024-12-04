@@ -15,6 +15,13 @@ func check(e error) {
 	}
 }
 
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
 func main() {
 	input, err := os.Open("input.txt")
 	check(err)
@@ -51,11 +58,7 @@ func main() {
 	var result int
 
 	for i, num := range leftList {
-		if num > rightList[i] {
-			result += num - rightList[i]
-		} else {
-			result += rightList[i] - num
-		}
+		result += abs(num - rightList[i])
 	}
 
 	fmt.Println("result: ", result)
