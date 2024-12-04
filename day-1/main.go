@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -20,23 +21,43 @@ func main() {
 	defer input.Close()
 
 	r := bufio.NewReader(input)
+	var leftList []int
+	var rightList []int
 
-	line, err := r.ReadString('\n')
-	check(err)
+	for {
+		line, err := r.ReadString('\n')
+		if err != nil {
+			break
+		}
 
-	line, ok := strings.CutSuffix(line, "\n")
-	if !ok {
-		fmt.Println("Error removing suffix from the line:\n", line)
+		line, ok := strings.CutSuffix(line, "\n")
+		if !ok {
+			fmt.Println("Error removing suffix from the line:\n", line)
+		}
+
+		nums := strings.Split(line, "   ")
+		num1, err := strconv.Atoi(nums[0])
+		check(err)
+
+		num2, err := strconv.Atoi(nums[1])
+		check(err)
+		leftList = append(leftList, num1)
+		rightList = append(rightList, num2)
 	}
 
-	nums := strings.Split(line, "   ")
-	num1, err := strconv.Atoi(nums[0])
-	check(err)
+	sort.Slice(leftList, func(i, j int) bool { return leftList[i] < leftList[j] })
+	sort.Slice(rightList, func(i, j int) bool { return rightList[i] < rightList[j] })
 
-	num2, err := strconv.Atoi(nums[1])
-	check(err)
+	var result int
 
-	fmt.Println(nums)
-	fmt.Println("num1: ", num1)
-	fmt.Println("num2: ", num2)
+	for i, num := range leftList {
+		if num > rightList[i] {
+			result += num - rightList[i]
+		} else {
+			result += rightList[i] - num
+		}
+	}
+
+	fmt.Println("result: ", result)
+
 }
